@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Mealora — Ton menu, ton budget</title>
+
+<style>
+:root{
+  --green:#22c55e;
+  --green2:#16a34a;
+  --green-soft:#dcfce7;
+  --dark:#111827;
+  --gray:#6b7280;
+  --light:#f7f8f5;
+  --white:#fff;
+  --border:#e5e7eb;
+  --red:#ef4444;
+  --orange:#f59e0b;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--light);
+  color:var(--dark);
+  font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+button,input{
+  font:inherit;
+}
+
+.app{
+  max-width:520px;
+  margin:auto;
+  min-height:100vh;
+  padding-bottom:40px;
+}
+
+header{
+  padding:22px 20px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.logo span{
+  color:var(--green2);
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:var(--dark);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+}
+
+.screen{
+  padding:10px 18px 30px;
+}
+
+.hero{
+  background:linear-gradient(135deg,#111827,#1f2937);
+  color:white;
+  border-radius:26px;
+  padding:25px 21px;
+  margin-bottom:18px;
+  box-shadow:0 15px 40px rgba(17,24,39,.15);
+}
+
+.badge{
+  display:inline-block;
+  background:rgba(34,197,94,.16);
+  color:#86efac;
+  border-radius:30px;
+  padding:7px 11px;
+  font-size:11px;
+  font-weight:800;
+  margin-bottom:12px;
+}
+
+.hero h1{
+  font-size:29px;
+  line-height:1.08;
+  margin:0 0 10px;
+  letter-spacing:-1px;
+}
+
+.hero p{
+  color:#d1d5db;
+  font-size:14px;
+  line-height:1.5;
+  margin:0;
+}
+
+.card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:19px;
+  margin-bottom:13px;
+  box-shadow:0 2px 8px rgba(0,0,0,.025);
+}
+
+.title{
+  font-size:12px;
+  text-transform:uppercase;
+  color:var(--gray);
+  font-weight:900;
+  letter-spacing:.05em;
+  margin-bottom:13px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.choice{
+  border:1.5px solid var(--border);
+  background:#fafafa;
+  padding:13px 11px;
+  border-radius:13px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  transition:.18s;
+}
+
+.choice.active{
+  border-color:var(--green);
+  background:var(--green-soft);
+  color:#15803d;
+}
+
+.slider-value{
+  font-size:38px;
+  font-weight:900;
+  margin-bottom:3px;
+}
+
+.slider-value small{
+  font-size:14px;
+  color:var(--gray);
+  font-weight:600;
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:var(--green);
+  margin:12px 0;
+}
+
+.range-labels{
+  display:flex;
+  justify-content:space-between;
+  color:var(--gray);
+  font-size:11px;
+}
+
+.primary{
+  width:100%;
+  border:0;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:white;
+  padding:17px;
+  border-radius:15px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(34,197,94,.22);
+}
+
+.secondary{
+  width:100%;
+  border:1px solid var(--border);
+  background:white;
+  color:var(--dark);
+  padding:14px;
+  border-radius:14px;
+  font-weight:800;
+  margin-top:10px;
+}
+
+/* RESULTS */
+
+#results{
+  display:none;
+}
+
+.summary{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.summary-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.summary-label{
+  font-size:12px;
+  color:var(--gray);
+  font-weight:700;
+}
+
+.summary-total{
+  font-size:20px;
+  font-weight:900;
+}
+
+.progress{
+  height:9px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  background:var(--green);
+  border-radius:20px;
+  transition:.4s;
+}
+
+.small-info{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--gray);
+}
+
+.section-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin:25px 2px 10px;
+}
+
+.section-heading h2{
+  margin:0;
+  font-size:20px;
+  letter-spacing:-.5px;
+}
+
+.section-heading span{
+  color:var(--gray);
+  font-size:12px;
+}
+
+.meal{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:15px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:9px;
+}
+
+.meal-emoji{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#f3f4f6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  flex-shrink:0;
+}
+
+.meal-info{
+  flex:1;
+  min-width:0;
+}
+
+.meal-day{
+  color:var(--green2);
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  margin-bottom:3px;
+}
+
+.meal-name{
+  font-size:14px;
+  font-weight:800;
+}
+
+.meal-meta{
+  color:var(--gray);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.meal-actions{
+  display:flex;
+  flex-direction:column;
+  align-items:end;
+  gap:7px;
+}
+
+.meal-price{
+  font-weight:900;
+  font-size:13px;
+}
+
+.swap{
+  border:0;
+  background:#f0fdf4;
+  color:#15803d;
+  padding:6px 8px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.shop-item{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:13px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.check{
+  width:22px;
+  height:22px;
+  border:1.5px solid #d1d5db;
+  border-radius:7px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-shrink:0;
+  cursor:pointer;
+  color:white;
+  font-size:13px;
+}
+
+.check.done{
+  background:var(--green);
+  border-color:var(--green);
+}
+
+.shop-info{
+  flex:1;
+}
+
+.shop-name{
+  font-size:13px;
+  font-weight:700;
+}
+
+.shop-qty{
+  font-size:11px;
+  color:var(--gray);
+  margin-top:3px;
+}
+
+.shop-price{
+  font-weight:900;
+  font-size:13px;
+}
+
+.category{
+  margin:18px 2px 8px;
+  font-size:11px;
+  font-weight:900;
+  color:var(--gray);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%) translateY(20px);
+  background:#111827;
+  color:white;
+  padding:12px 17px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:700;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:20;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.loader{
+  position:fixed;
+  inset:0;
+  background:#111827;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:100;
+  transition:.4s;
+}
+
+.loader.hide{
+  opacity:0;
+  pointer-events:none;
+}
+
+.loader-logo{
+  font-size:32px;
+  font-weight:900;
+}
+
+.loader-logo span{
+  color:#4ade80;
+}
+
+.loader p{
+  color:#9ca3af;
+  font-size:12px;
+}
+
+@media(min-width:700px){
+  body{
+    padding:20px 0;
+  }
+
+  .app{
+    background:var(--light);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-logo">Meal<span>ora</span></div>
+  <p>Ton budget. Ton menu. Ta semaine.</p>
+</div>
+
+<div class="app">
+
+<header>
+  <div class="logo">Meal<span>ora</span></div>
+  <div class="avatar">M</div>
+</header>
+
+<div class="screen">
+
+<div id="form">
+
+  <div class="hero">
+    <div class="badge">✨ PLANIFICATION INTELLIGENTE</div>
+    <h1>Mange mieux.<br>Dépense moins.</h1>
+    <p>Construis une semaine de dîners adaptée à ton budget, ton objectif et ton magasin.</p>
+  </div>
+
+  <div class="card">
+    <div class="title">🛒 Ton magasin</div>
+    <div class="grid" id="stores"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">💶 Ton budget</div>
+
+    <div class="slider-value">
+      <span id="budgetValue">60</span><small> € / semaine</small>
+    </div>
+
+    <input id="budget" type="range" min="25" max="180" step="5" value="60">
+
+    <div class="range-labels">
+      <span>25 €</span>
+      <span>180 €</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">👨‍👩‍👧 Pour combien ?</div>
+    <div class="grid" id="people"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">🎯 Ton objectif</div>
+    <div class="grid" id="goals"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">🍽️ Tes dîners</div>
+
+    <div class="slider-value">
+      <span id="mealsValue">5</span><small> dîners</small>
+    </div>
+
+    <input id="meals" type="range" min="3" max="7" value="5">
+
+    <div class="range-labels">
+      <span>3</span>
+      <span>7</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">🥩 Protéines</div>
+    <div class="grid" id="proteins"></div>
+  </div>
+
+  <div class="card">
+    <div class="title">🌱 Ton alimentation</div>
+    <div class="grid" id="diets"></div>
+  </div>
+
+  <button class="primary" id="generate">
+    Générer ma semaine →
+  </button>
+
+</div>
+
+<div id="results">
+
+  <div class="summary">
+    <div class="summary-top">
+      <div>
+        <div class="summary-label">BUDGET ESTIMÉ</div>
+        <div class="summary-total">
+          <span id="total">0</span> € / <span id="budgetResult">0</span> €
+        </div>
+      </div>
+
+      <div>🌿</div>
+    </div>
+
+    <div class="progress">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="small-info" id="summaryText"></div>
+  </div>
+
+  <div class="section-heading">
+    <h2>Ta semaine</h2>
+    <span id="mealCount"></span>
+  </div>
+
+  <div id="menu"></div>
+
+  <div class="section-heading">
+    <h2>Liste de courses</h2>
+    <span id="itemCount"></span>
+  </div>
+
+  <div id="shopping"></div>
+
+  <button class="secondary" id="back">
+    ← Modifier mes préférences
+  </button>
+
+</div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const stores = [
+  {id:"lidl",name:"Lidl",emoji:"🟡",mult:.82},
+  {id:"aldi",name:"Aldi",emoji:"🔵",mult:.80},
+  {id:"leclerc",name:"Leclerc",emoji:"🔴",mult:1},
+  {id:"carrefour",name:"Carrefour",emoji:"🔵",mult:1.08},
+  {id:"auchan",name:"Auchan",emoji:"🦅",mult:1.06},
+  {id:"intermarche",name:"Intermarché",emoji:"🟢",mult:1.03}
+];
+
+const recipes = [
+  {e:"🍗",n:"Poulet citron & riz",g:"maintien",p:38,c:4.4,t:"classique",ings:["poulet","riz","brocoli","citron"]},
+  {e:"🍝",n:"Pâtes crémeuses au poulet",g:"masse",p:42,c:4.8,t:"classique",ings:["poulet","pates","tomates","ail"]},
+  {e:"🌮",n:"Tacos bœuf & poivrons",g:"masse",p:36,c:5.2,t:"classique",ings:["boeuf","poivron","oignon","tortillas"]},
+  {e:"🐟",n:"Saumon, riz & brocolis",g:"maintien",p:39,c:6.3,t:"pescetarien",ings:["saumon","riz","brocoli"]},
+  {e:"🍛",n:"Curry pois chiches coco",g:"perte",p:18,c:3.1,t:"vegan",ings:["pois_chiches","coco","riz","epices"]},
+  {e:"🥙",n:"Bowl thon & avocat",g:"perte",p:32,c:4.7,t:"pescetarien",ings:["thon","avocat","quinoa"]},
+  {e:"🍳",n:"Omelette légumes",g:"perte",p:25,c:3.2,t:"vegetarien",ings:["oeufs","poivron","oignon","pain"]},
+  {e:"🥘",n:"Tofu sauté aux légumes",g:"perte",p:24,c:3.4,t:"vegan",ings:["tofu","courgette","riz"]},
+  {e:"🍤",n:"Crevettes & quinoa",g:"maintien",p:34,c:5.4,t:"pescetarien",ings:["crevettes","quinoa","courgette"]},
+  {e:"🥩",n:"Steak & patate douce",g:"masse",p:40,c:5.1,t:"classique",ings:["boeuf","patate","brocoli"]},
+  {e:"🥣",n:"Lentilles épicées",g:"perte",p:19,c:2.6,t:"vegan",ings:["lentilles","tomates","oignon"]},
+  {e:"🌯",n:"Wrap poulet crudités",g:"perte",p:34,c:4.1,t:"classique",ings:["poulet","tortillas","tomates","avocat"]},
+  {e:"🍚",n:"Poulet curry & riz",g:"masse",p:41,c:4.6,t:"classique",ings:["poulet","riz","coco","epices"]},
+  {e:"🥗",n:"Bowl tofu avocat",g:"maintien",p:27,c:4.0,t:"vegan",ings:["tofu","avocat","quinoa"]},
+  {e:"🥚",n:"Œufs, riz & légumes",g:"maintien",p:24,c:3.4,t:"vegetarien",ings:["oeufs","riz","poivron"]}
+];
+
+const prices = {
+  poulet:4.2,
+  riz:2.2,
+  brocoli:1.9,
+  citron:.6,
+  pates:1.3,
+  tomates:2,
+  ail:.7,
+  boeuf:4.6,
+  poivron:1.8,
+  oignon:.9,
+  tortillas:2,
+  saumon:6.5,
+  pois_chiches:1.2,
+  coco:1.6,
+  epices:1.5,
+  thon:1.4,
+  avocat:1.5,
+  quinoa:3.2,
+  oeufs:2.1,
+  pain:1.6,
+  tofu:2.3,
+  courgette:1.6,
+  crevettes:5,
+  patate:2.4,
+  lentilles:1.8
+};
+
+const names = {
+  poulet:"Blanc de poulet",
+  riz:"Riz basmati",
+  brocoli:"Brocolis",
+  citron:"Citrons",
+  pates:"Pâtes complètes",
+  tomates:"Tomates",
+  ail:"Ail",
+  boeuf:"Steak haché 5%",
+  poivron:"Poivrons",
+  oignon:"Oignons",
+  tortillas:"Tortillas",
+  saumon:"Saumon",
+  pois_chiches:"Pois chiches",
+  coco:"Lait de coco",
+  epices:"Épices",
+  thon:"Thon au naturel",
+  avocat:"Avocats",
+  quinoa:"Quinoa",
+  oeufs:"Œufs",
+  pain:"Pain complet",
+  tofu:"Tofu ferme",
+  courgette:"Courgettes",
+  crevettes:"Crevettes",
+  patate:"Patates douces",
+  lentilles:"Lentilles corail"
+};
+
+let state = {
+  store:"lidl",
+  budget:60,
+  people:2,
+  goal:"masse",
+  meals:5,
+  protein:"eleve",
+  diet:"classique",
+  menu:[]
+};
+
+const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+
+function choices(id,data,current,callback){
+  const el=document.getElementById(id);
+  el.innerHTML="";
+
+  data.forEach(x=>{
+    const b=document.createElement("div");
+    b.className="choice"+(x.id===current?" active":"");
+    b.textContent=x.label;
+    b.onclick=()=>{
+      state[callback]=x.id;
+      [...el.children].forEach(c=>c.classList.remove("active"));
+      b.classList.add("active");
+    };
+    el.appendChild(b);
+  });
+}
+
+choices("stores",
+  stores.map(x=>({id:x.id,label:x.emoji+" "+x.name})),
+  state.store,
+  "store"
+);
+
+choices("people",
+  [
+    {id:1,label:"1 personne"},
+    {id:2,label:"2 personnes"},
+    {id:3,label:"3 personnes"},
+    {id:4,label:"4 personnes"}
+  ],
+  state.people,
+  "people"
+);
+
+choices("goals",
+  [
+    {id:"masse",label:"💪 Prise de masse"},
+    {id:"perte",label:"🔥 Perte de poids"},
+    {id:"maintien",label:"⚖️ Maintien"}
+  ],
+  state.goal,
+  "goal"
+);
+
+choices("proteins",
+  [
+    {id:"modere",label:"Modéré"},
+    {id:"eleve",label:"Élevé"},
+    {id:"tres",label:"Très élevé"}
+  ],
+  state.protein,
+  "protein"
+);
+
+choices("diets",
+  [
+    {id:"classique",label:"🍗 Classique"},
+    {id:"vegetarien",label:"🥬 Végétarien"},
+    {id:"vegan",label:"🌱 Vegan"},
+    {id:"pescetarien",label:"🐟 Pescétarien"}
+  ],
+  state.diet,
+  "diet"
+);
+
+document.getElementById("budget").oninput=e=>{
+  state.budget=+e.target.value;
+  document.getElementById("budgetValue").textContent=state.budget;
+};
+
+document.getElementById("meals").oninput=e=>{
+  state.meals=+e.target.value;
+  document.getElementById("mealsValue").textContent=state.meals;
+};
+
+function compatible(r){
+  if(state.diet!=="classique" && r.t!==state.diet) return false;
+
+  if(state.goal==="masse" && r.g==="perte") return false;
+
+  if(state.goal==="perte" && r.g==="masse") return false;
+
+  if(state.protein==="tres" && r.p<30) return false;
+
+  if(state.protein==="eleve" && r.p<24) return false;
+
+  return true;
+}
+
+function generateMenu(){
+
+  let pool=recipes.filter(compatible);
+
+  if(pool.length<3) pool=recipes;
+
+  pool=pool.slice().sort((a,b)=>{
+
+    if(state.protein==="tres") return b.p-a.p;
+    if(state.goal==="perte") return a.c-b.c;
+    return b.p-a.p;
+  });
+
+  state.menu=[];
+
+  for(let i=0;i<state.meals;i++){
+    state.menu.push(pool[i%pool.length]);
+  }
+
+  renderResults();
+}
+
+function recipeCost(r){
+  const store=stores.find(s=>s.id===state.store);
+  return r.c*store.mult*state.people;
+}
+
+function totalCost(){
+  return state.menu.reduce((a,r)=>a+recipeCost(r),0);
+}
+
+function renderResults(){
+
+  document.getElementById("form").style.display="none";
+  document.getElementById("results").style.display="block";
+
+  renderMenu();
+  renderShopping();
+  updateSummary();
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderMenu(){
+
+  const el=document.getElementById("menu");
+  el.innerHTML="";
+
+  document.getElementById("mealCount").textContent=
+    state.menu.length+" dîners";
+
+  state.menu.forEach((r,i)=>{
+
+    const row=document.createElement("div");
+    row.className="meal";
+
+    row.innerHTML=`
+      <div class="meal-emoji">${r.e}</div>
+
+      <div class="meal-info">
+        <div class="meal-day">${days[i]}</div>
+        <div class="meal-name">${r.n}</div>
+        <div class="meal-meta">${r.p} g protéines · ${state.people} pers.</div>
+      </div>
+
+      <div class="meal-actions">
+        <div class="meal-price">${recipeCost(r).toFixed(2)} €</div>
+        <button class="swap">Changer</button>
+      </div>
+    `;
+
+    row.querySelector(".swap").onclick=()=>{
+      swapMeal(i);
+    };
+
+    el.appendChild(row);
+  });
+}
+
+function swapMeal(index){
+
+  const current=state.menu[index];
+
+  let options=recipes.filter(r=>
+    compatible(r) && r.n!==current.n
+  );
+
+  if(!options.length) options=recipes;
+
+  const replacement=options[
+    Math.floor(Math.random()*options.length)
+  ];
+
+  state.menu[index]=replacement;
+
+  renderMenu();
+  renderShopping();
+  updateSummary();
+
+  toast("Repas remplacé ✨");
+}
+
+function renderShopping(){
+
+  const counts={};
+
+  state.menu.forEach(r=>{
+    r.ings.forEach(k=>{
+      counts[k]=(counts[k]||0)+1;
+    });
+  });
+
+  const el=document.getElementById("shopping");
+  el.innerHTML="";
+
+  const keys=Object.keys(counts);
+
+  document.getElementById("itemCount").textContent=
+    keys.length+" ingrédients";
+
+  keys.forEach(k=>{
+
+    const row=document.createElement("div");
+    row.className="shop-item";
+
+    row.innerHTML=`
+      <div class="check"></div>
+
+      <div class="shop-info">
+        <div class="shop-name">${names[k]}</div>
+        <div class="shop-qty">${counts[k]} repas concernés</div>
+      </div>
+
+      <div class="shop-price">
+        ${(prices[k]*stores.find(s=>s.id===state.store).mult).toFixed(2)} €
+      </div>
+    `;
+
+    const check=row.querySelector(".check");
+
+    check.onclick=()=>{
+      check.classList.toggle("done");
+      check.textContent=check.classList.contains("done")?"✓":"";
+      row.style.opacity=check.classList.contains("done")?".45":"1";
+    };
+
+    el.appendChild(row);
+  });
+}
+
+function updateSummary(){
+
+  const total=totalCost();
+
+  document.getElementById("total").textContent=total.toFixed(0);
+  document.getElementById("budgetResult").textContent=state.budget;
+
+  const pct=Math.min(100,(total/state.budget)*100);
+
+  document.getElementById("progress").style.width=pct+"%";
+
+  if(total>state.budget){
+    document.getElementById("progress").style.background="#ef4444";
+  }else{
+    document.getElementById("progress").style.background="#22c55e";
+  }
+
+  const store=stores.find(s=>s.id===state.store);
+
+  if(total<=state.budget){
+    document.getElementById("summaryText").textContent=
+      `✓ Ton menu respecte ton budget chez ${store.name}.`;
+  }else{
+    document.getElementById("summaryText").textContent=
+      `⚠️ Il dépasse ton budget de ${(total-state.budget).toFixed(0)} €.`;
+  }
+}
+
+function toast(text){
+
+  const t=document.getElementById("toast");
+
+  t.textContent=text;
+  t.classList.add("show");
+
+  setTimeout(()=>{
+    t.classList.remove("show");
+  },2200);
+}
+
+document.getElementById("generate").onclick=()=>{
+  generateMenu();
+};
+
+document.getElementById("back").onclick=()=>{
+
+  document.getElementById("results").style.display="none";
+  document.getElementById("form").style.display="block";
+
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+setTimeout(()=>{
+  document.getElementById("loader").classList.add("hide");
+},700);
+
+</script>
+
+</body>
+</html>
